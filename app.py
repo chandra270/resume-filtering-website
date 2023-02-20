@@ -17,15 +17,15 @@ from PIL import Image
 import time
 
 
-# image = Image.open('Images//he.png')
-# st.image(image,width= 550)
+image = Image.open('Images//he.png')
+st.image(image,width= 550)
 
 st.title("HIRE EASY")
 
 
 # Reading the CSV files prepared by the fileReader.py
 Resumes = pd.read_csv('Resume_Data.csv')
-Jobs = pd.read_csv('Job_Data.csv')
+Jobs = pd.read_csv('Job_Data.csv') 
 
 
 ############################### JOB DESCRIPTION CODE ######################################
@@ -97,24 +97,24 @@ Ranked_resumes['Rank'] = pd.DataFrame(
 
 ###################################### SCORE TABLE PLOT ####################################
 
-# fig1 = go.Figure(data=[go.Table(
-#     header=dict(values=["Rank", "Name", "Scores"],
-#                 fill_color='#00416d',
-#                 align='center', font=dict(color='white', size=16)),
-#     cells=dict(values=[Ranked_resumes.Rank, Ranked_resumes.Name, Ranked_resumes.Scores],
-#                fill_color='#122545',
-#                align='left'))])
+fig1 = go.Figure(data=[go.Table(
+    header=dict(values=["Rank", "Name", "Scores"],
+                fill_color='#00416d',
+                align='center', font=dict(color='white', size=16)),
+    cells=dict(values=[Ranked_resumes.Rank, Ranked_resumes.Name, Ranked_resumes.Scores],
+               fill_color='#122545',
+               align='left'))])
 
-# fig1.update_layout(title="Top Ranked Resumes", width=700, height=1100)
-# st.write(fig1)
+fig1.update_layout(title="Top Ranked Resumes", width=700, height=1100)
+st.write(fig1)
 
-# st.markdown("---")
+st.markdown("---")
 
-# fig2 = px.bar(Ranked_resumes,
-#               x=Ranked_resumes['Name'], y=Ranked_resumes['Scores'], color='Scores',
-#               color_continuous_scale='haline', title="Score and Rank Distribution")
-# fig.update_layout(width=700, height=700)
-# st.write(fig2)
+fig2 = px.bar(Ranked_resumes,
+              x=Ranked_resumes['Name'], y=Ranked_resumes['Scores'], color='Scores',
+              color_continuous_scale='haline', title="Score and Rank Distribution")
+fig.update_layout(width=700, height=700)
+st.write(fig2)
 
 
 st.markdown("---")
@@ -145,114 +145,114 @@ lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus, id2word=id2word, num_
 ################################### LDA CODE ##############################################
 
 
-# @st.cache  # Trying to improve performance by reducing the rerun computations
-# def format_topics_sentences(ldamodel, corpus):
-#     sent_topics_df = []
-#     for i, row_list in enumerate(ldamodel[corpus]):
-#         row = row_list[0] if ldamodel.per_word_topics else row_list
-#         row = sorted(row, key=lambda x: (x[1]), reverse=True)
-#         for j, (topic_num, prop_topic) in enumerate(row):
-#             if j == 0:
-#                 wp = ldamodel.show_topic(topic_num)
-#                 topic_keywords = ", ".join([word for word, prop in wp])
-#                 sent_topics_df.append(
-#                     [i, int(topic_num), round(prop_topic, 4)*100, topic_keywords])
-#             else:
-#                 break
+@st.cache  # Trying to improve performance by reducing the rerun computations
+def format_topics_sentences(ldamodel, corpus):
+    sent_topics_df = []
+    for i, row_list in enumerate(ldamodel[corpus]):
+        row = row_list[0] if ldamodel.per_word_topics else row_list
+        row = sorted(row, key=lambda x: (x[1]), reverse=True)
+        for j, (topic_num, prop_topic) in enumerate(row):
+            if j == 0:
+                wp = ldamodel.show_topic(topic_num)
+                topic_keywords = ", ".join([word for word, prop in wp])
+                sent_topics_df.append(
+                    [i, int(topic_num), round(prop_topic, 4)*100, topic_keywords])
+            else:
+                break
 
-#     return sent_topics_df
-
-
-# ################################# Topic Word Cloud Code #####################################
-# # st.sidebar.button('Hit Me')
-# st.markdown("## Topics and Topic Related Keywords ")
-# st.markdown(
-#     """This Wordcloud representation shows the Topic Number and the Top Keywords that contstitute a Topic.
-#     This further is used to cluster the resumes.      """)
-
-# cols = [color for name, color in mcolors.TABLEAU_COLORS.items()]
-
-# cloud = WordCloud(background_color='white',
-#                   width=2500,
-#                   height=1800,
-#                   max_words=10,
-#                   colormap='tab10',
-#                   collocations=False,
-#                   color_func=lambda *args, **kwargs: cols[i],
-#                   prefer_horizontal=1.0)
-
-# topics = lda_model.show_topics(formatted=False)
-
-# fig, axes = plt.subplots(2, 3, figsize=(10, 10), sharex=True, sharey=True)
-
-# for i, ax in enumerate(axes.flatten()):
-#     fig.add_subplot(ax)
-#     topic_words = dict(topics[i][1])
-#     cloud.generate_from_frequencies(topic_words, max_font_size=300)
-#     plt.gca().imshow(cloud)
-#     plt.gca().set_title('Topic ' + str(i), fontdict=dict(size=16))
-#     plt.gca().axis('off')
+    return sent_topics_df
 
 
-# plt.subplots_adjust(wspace=0, hspace=0)
-# plt.axis('off')
-# plt.margins(x=0, y=0)
-# plt.tight_layout()
-# st.pyplot(plt)
+################################# Topic Word Cloud Code #####################################
+# st.sidebar.button('Hit Me')
+st.markdown("## Topics and Topic Related Keywords ")
+st.markdown(
+    """This Wordcloud representation shows the Topic Number and the Top Keywords that contstitute a Topic.
+    This further is used to cluster the resumes.      """)
 
-# st.markdown("---")
+cols = [color for name, color in mcolors.TABLEAU_COLORS.items()]
 
-####################### SETTING UP THE DATAFRAME FOR SUNBURST-GRAPH ############################
+cloud = WordCloud(background_color='white',
+                  width=2500,
+                  height=1800,
+                  max_words=10,
+                  colormap='tab10',
+                  collocations=False,
+                  color_func=lambda *args, **kwargs: cols[i],
+                  prefer_horizontal=1.0)
 
-# df_topic_sents_keywords = format_topics_sentences(
-#     ldamodel=lda_model, corpus=corpus)
-# df_some = pd.DataFrame(df_topic_sents_keywords, columns=[
-#                        'Document No', 'Dominant Topic', 'Topic % Contribution', 'Keywords'])
-# df_some['Names'] = Resumes['Name']
+topics = lda_model.show_topics(formatted=False)
 
-# df = df_some
+fig, axes = plt.subplots(2, 3, figsize=(10, 10), sharex=True, sharey=True)
 
-# st.markdown("## Topic Modelling of Resumes ")
-# st.markdown(
-#     "Using LDA to divide the topics into a number of usefull topics and creating a Cluster of matching topic resumes.  ")
-# fig3 = px.sunburst(df, path=['Dominant Topic', 'Names'], values='Topic % Contribution',
-#                    color='Dominant Topic', color_continuous_scale='viridis', width=800, height=800, title="Topic Distribution Graph")
-# st.write(fig3)
+for i, ax in enumerate(axes.flatten()):
+    fig.add_subplot(ax)
+    topic_words = dict(topics[i][1])
+    cloud.generate_from_frequencies(topic_words, max_font_size=300)
+    plt.gca().imshow(cloud)
+    plt.gca().set_title('Topic ' + str(i), fontdict=dict(size=16))
+    plt.gca().axis('off')
 
 
-############################## RESUME PRINTING #############################
+plt.subplots_adjust(wspace=0, hspace=0)
+plt.axis('off')
+plt.margins(x=0, y=0)
+plt.tight_layout()
+st.pyplot(plt)
 
-# option_2 = st.selectbox("Show the Best Matching Resumes?", options=[
-#     'YES', 'NO'])
-# if option_2 == 'YES':
-#     indx = st.slider("Which resume to display ?:",
-#                      1, Ranked_resumes.shape[0], 1)
+st.markdown("---")
 
-#     st.write("Displaying Resume with Rank: ", indx)
-#     st.markdown("---")
-#     st.markdown("## **Resume** ")
-#     value = Ranked_resumes.iloc[indx-1, 2]
-#     st.markdown("#### The Word Cloud For the Resume")
-#     wordcloud = WordCloud(width=800, height=800,
-#                           background_color='white',
-#                           colormap='viridis', collocations=False,
-#                           min_font_size=10).generate(value)
-#     plt.figure(figsize=(7, 7), facecolor=None)
-#     plt.imshow(wordcloud)
-#     plt.axis("off")
-#     plt.tight_layout(pad=0)
-#     st.pyplot(plt)
+###################### SETTING UP THE DATAFRAME FOR SUNBURST-GRAPH ############################
 
-#     st.write("With a Match Score of :", Ranked_resumes.iloc[indx-1, 6])
-#     fig = go.Figure(data=[go.Table(
-#         header=dict(values=["Resume"],
-#                     fill_color='#f0a500',
-#                     align='center', font=dict(color='white', size=16)),
-#         cells=dict(values=[str(value)],
-#                    fill_color='#11470c',
-#                    align='left'))])
+df_topic_sents_keywords = format_topics_sentences(
+    ldamodel=lda_model, corpus=corpus)
+df_some = pd.DataFrame(df_topic_sents_keywords, columns=[
+                       'Document No', 'Dominant Topic', 'Topic % Contribution', 'Keywords'])
+df_some['Names'] = Resumes['Name']
 
-#     fig.update_layout(width=800, height=1200)
-#     st.write(fig)
-#     # st.text(df_sorted.iloc[indx-1, 1])
-#     st.markdown("---")
+df = df_some
+
+st.markdown("## Topic Modelling of Resumes ")
+st.markdown(
+    "Using LDA to divide the topics into a number of usefull topics and creating a Cluster of matching topic resumes.  ")
+fig3 = px.sunburst(df, path=['Dominant Topic', 'Names'], values='Topic % Contribution',
+                   color='Dominant Topic', color_continuous_scale='viridis', width=800, height=800, title="Topic Distribution Graph")
+st.write(fig3)
+
+
+############################# RESUME PRINTING #############################
+
+option_2 = st.selectbox("Show the Best Matching Resumes?", options=[
+    'YES', 'NO'])
+if option_2 == 'YES':
+    indx = st.slider("Which resume to display ?:",
+                     1, Ranked_resumes.shape[0], 1)
+
+    st.write("Displaying Resume with Rank: ", indx)
+    st.markdown("---")
+    st.markdown("## **Resume** ")
+    value = Ranked_resumes.iloc[indx-1, 2]
+    st.markdown("#### The Word Cloud For the Resume")
+    wordcloud = WordCloud(width=800, height=800,
+                          background_color='white',
+                          colormap='viridis', collocations=False,
+                          min_font_size=10).generate(value)
+    plt.figure(figsize=(7, 7), facecolor=None)
+    plt.imshow(wordcloud)
+    plt.axis("off")
+    plt.tight_layout(pad=0)
+    st.pyplot(plt)
+
+    st.write("With a Match Score of :", Ranked_resumes.iloc[indx-1, 6])
+    fig = go.Figure(data=[go.Table(
+        header=dict(values=["Resume"],
+                    fill_color='#f0a500',
+                    align='center', font=dict(color='white', size=16)),
+        cells=dict(values=[str(value)],
+                   fill_color='#11470c',
+                   align='left'))])
+
+    fig.update_layout(width=800, height=1200)
+    st.write(fig)
+    # st.text(df_sorted.iloc[indx-1, 1])
+    st.markdown("---")
