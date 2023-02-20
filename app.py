@@ -17,15 +17,15 @@ from PIL import Image
 import time
 
 
-# image = Image.open('Images//he.png')
-# st.image(image,width= 550)
+image = Image.open('Images//he.png')
+st.image(image,width= 550)
 
 st.title("HIRE EASY")
 
 
 # Reading the CSV files prepared by the fileReader.py
 Resumes = pd.read_csv('Resume_Data.csv')
-Jobs = pd.read_csv('Job_Data.csv')
+Jobs = pd.read_csv('Job_Data.csv') 
 
 
 ############################### JOB DESCRIPTION CODE ######################################
