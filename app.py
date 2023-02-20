@@ -42,7 +42,7 @@ else:
 # Asking to Print the Job Desciption Names
 if len(Jobs['Name']) > 1:
     option_yn = st.selectbox(
-        "Show the Job Description Names?", options=['YES', 'NO'])
+        "Show the      Job Description Names?", options=['YES', 'NO'])
     if option_yn == 'YES':
         index = [a+1 for a in range(len(Jobs['Name']))]
         fig = go.Figure(data=[go.Table(header=dict(values=["Job No.", "Job Desc. Name"], line_color='white',
