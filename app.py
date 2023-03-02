@@ -17,8 +17,8 @@ from PIL import Image
 import time
 
 
-image = Image.open('Images//he.png')
-st.image(image,width= 550)
+#image = Image.open('Images//he.png')
+#st.image(image,width= 550)
 
 st.title("HIRE EASY")
 
