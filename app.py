@@ -116,4 +116,33 @@ st.write(fig2)
 
 
 st.markdown("---")
+option_2 = st.selectbox("Show the Best Matching Resumes?", options=[
+    'YES', 'NO'])
+if option_2 == 'YES':
+    indx = st.slider("Which resume to display ?:",
+                     1, Ranked_resumes.shape[0], 1)
 
+    st.write("Displaying Resume with Rank: ", indx)
+    st.markdown("---")
+    st.markdown("## **Resume** ")
+    value = Ranked_resumes.iloc[indx-1, 2]
+    st.markdown("#### The Word Cloud For the Resume")
+    wordcloud = WordCloud(width=800, height=800,
+                          background_color='white',
+                          colormap='viridis', collocations=False,
+                          min_font_size=10).generate(value)
+    
+
+    st.write("With a Match Score of :", Ranked_resumes.iloc[indx-1, 6])
+    fig = go.Figure(data=[go.Table(
+        header=dict(values=["Resume"],
+                    fill_color='#f0a500',
+                    align='center', font=dict(color='white', size=16)),
+        cells=dict(values=[str(value)],
+                   fill_color='#11470c',
+                   align='left'))])
+
+    fig.update_layout(width=800, height=1200)
+    st.write(fig)
+    # st.text(df_sorted.iloc[indx-1, 1])
+    st.markdown("---")
