@@ -6,7 +6,7 @@ import pandas as pd
 import os
 import tf_idf
 
-resume_dir = "Data/Resumes/"
+resume_dir = "Data/Resumes/docx/"
 job_desc_dir = "Data/JobDesc/"
 resume_names = os.listdir(resume_dir)
 job_description_names = os.listdir(job_desc_dir)
@@ -70,3 +70,4 @@ jd_database = pd.DataFrame(Jd, columns=[
                            "Name", "Context", "Cleaned", "Selective", "Selective_Reduced", "TF_Based"])
 
 jd_database.to_csv("Job_Data.csv", index=False)
+
