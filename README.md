@@ -1,9 +1,3 @@
-<p align="center">
-
-<!-- ![Naive Resume Matcher Logo](Images/rm_logo.png) -->
-<img src="Images/rm_logo.png"/>
-</p>
-
 # Naive-Resume-Matcher
 <p align="center">
 <a href="https://img.shields.io/badge/Tested%20on-WSL%202.0-brightgreen"><img src="https://img.shields.io/badge/Tested%20on-WSL%202.0-brightgreen"/> </a>
