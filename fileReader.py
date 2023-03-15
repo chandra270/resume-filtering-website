@@ -6,7 +6,7 @@ import pandas as pd
 import os
 import tf_idf
 
-resume_dir = "Data/Resumes/docx/"
+resume_dir = "Data/Resumes/"
 job_desc_dir = "Data/JobDesc/"
 resume_names = os.listdir(resume_dir)
 job_description_names = os.listdir(job_desc_dir)
@@ -14,13 +14,27 @@ job_description_names = os.listdir(job_desc_dir)
 document = []
 
 
+import textract
+import PyPDF2
+
 def read_resumes(list_of_resumes, resume_directory):
     placeholder = []
     for res in list_of_resumes:
         temp = []
         temp.append(res)
-        text = tx.process(resume_directory+res, encoding='ascii')
-        text = str(text, 'utf-8')
+        file_ext = os.path.splitext(res)[1]
+        if file_ext == ".docx":
+            text = textract.process(os.path.join(resume_directory, res), encoding='ascii')
+            text = str(text, 'utf-8')
+        elif file_ext == ".pdf":
+            with open(os.path.join(resume_directory, res), 'rb') as pdf_file:
+                pdf_reader = PyPDF2.PdfReader(pdf_file)
+                text = ""
+                for page_num in range(len(pdf_reader.pages)):
+                    page = pdf_reader.pages[page_num]
+                    text += page.extract_text()
+        else:
+            continue
         temp.append(text)
         placeholder.append(temp)
     return placeholder

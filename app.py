@@ -24,7 +24,7 @@ st.title("HIRE EASY")
 
 
 # Reading the CSV files prepared by the fileReader.py
-Resumes = pd.read_csv('merged.csv')
+Resumes = pd.read_csv('Resume_Data.csv')
 Jobs = pd.read_csv('Job_Data.csv') 
 
 
