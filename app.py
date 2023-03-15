@@ -114,7 +114,7 @@ fig2 = px.bar(Ranked_resumes,
 fig.update_layout(width=700, height=700)
 st.write(fig2)
 
-
+################ RESUME PARSING #####################
 st.markdown("---")
 option_2 = st.selectbox("Show the Best Matching Resumes?", options=[
     'YES', 'NO'])
@@ -131,7 +131,11 @@ if option_2 == 'YES':
                           background_color='white',
                           colormap='viridis', collocations=False,
                           min_font_size=10).generate(value)
-    
+    plt.figure(figsize=(7, 7), facecolor=None)
+    plt.imshow(wordcloud)
+    plt.axis("off")
+    plt.tight_layout(pad=0)
+    st.pyplot(plt)
 
     st.write("With a Match Score of :", Ranked_resumes.iloc[indx-1, 6])
     fig = go.Figure(data=[go.Table(
