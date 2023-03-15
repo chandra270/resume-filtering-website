@@ -84,4 +84,3 @@ jd_database = pd.DataFrame(Jd, columns=[
                            "Name", "Context", "Cleaned", "Selective", "Selective_Reduced", "TF_Based"])
 
 jd_database.to_csv("Job_Data.csv", index=False)
-
