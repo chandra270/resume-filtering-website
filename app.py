@@ -16,6 +16,8 @@ import Similar
 from PIL import Image
 import time
 import os
+import smtplib
+from dotenv import load_dotenv
 
 #image = Image.open('Images//he.png')
 #st.image(image,width= 550)
@@ -262,7 +264,6 @@ if option_2 == 'YES':
     
     # print the email of the best matched resume
     st.write("Best Matched Resume Email: ", email)
-    import smtplib
 
     # Set up the email message
     to_address = email
@@ -273,15 +274,27 @@ if option_2 == 'YES':
     # Set up the email server
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
-    server.login('hireeasy2019@gmail.com', 'vjguohjbhanchkjw')
 
-    # Send the email
-    server.sendmail('mainprojacaa2019@gmail.com', to_address, message)
+    load_dotenv('.env')
 
-    # Close the connection to the email server
-    server.quit()
+    sender_email = os.environ.get('EMAIL')
+    password = os.environ.get('PASSWORD')
 
-    st.write("The resume:\n", Ranked_resumes.iloc[indx-1, 1] )
+    # Define a function to send the email
+    def send_email():
+        # Log in to the email server
+        server.login(sender_email, password)
+
+        # Send the email
+        server.sendmail(sender_email, to_address, message)
+
+        # Close the connection to the email server
+        server.quit()
+
+    # Add a button to send the email
+    if st.button('Send email'):
+        send_email()
+        st.write('Email sent to:', email)
 
     # import fitz
 
