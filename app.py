@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import Similar
 from PIL import Image
 import time
-
+import os
 
 #image = Image.open('Images//he.png')
 #st.image(image,width= 550)
@@ -98,10 +98,10 @@ Ranked_resumes['Rank'] = pd.DataFrame(
 ###################################### SCORE TABLE PLOT ####################################
 
 fig1 = go.Figure(data=[go.Table(
-    header=dict(values=["Rank", "Name", "Scores"],
+    header=dict(values=["Rank", "Name", "Email", "Scores"],
                 fill_color='#00416d',
                 align='center', font=dict(color='white', size=16)),
-    cells=dict(values=[Ranked_resumes.Rank, Ranked_resumes.Name, Ranked_resumes.Scores],
+    cells=dict(values=[Ranked_resumes.Rank, Ranked_resumes.Name, Ranked_resumes.Email, Ranked_resumes.Scores],
                fill_color='#122545',
                align='left'))])
 
@@ -113,9 +113,8 @@ st.markdown("---")
 fig2 = px.bar(Ranked_resumes,
               x=Ranked_resumes['Name'], y=Ranked_resumes['Scores'], color='Scores',
               color_continuous_scale='haline', title="Score and Rank Distribution")
-fig.update_layout(width=700, height=700)
+fig2.update_layout(width=700, height=700)
 st.write(fig2)
-
 
 st.markdown("---")
 
@@ -229,6 +228,10 @@ if option_2 == 'YES':
                      1, Ranked_resumes.shape[0], 1)
 
     st.write("Displaying Resume with Rank: ", indx)
+    
+    # get the email of the best matched resume
+    email = Ranked_resumes.iloc[indx-1, 6]
+    
     st.markdown("---")
     st.markdown("## **Resume** ")
     value = Ranked_resumes.iloc[indx-1, 2]
@@ -243,16 +246,50 @@ if option_2 == 'YES':
     plt.tight_layout(pad=0)
     st.pyplot(plt)
 
-    st.write("With a Match Score of :", Ranked_resumes.iloc[indx-1, 6])
-    fig = go.Figure(data=[go.Table(
-        header=dict(values=["Resume"],
-                    fill_color='#f0a500',
-                    align='center', font=dict(color='white', size=16)),
-        cells=dict(values=[str(value)],
-                   fill_color='#11470c',
-                   align='left'))])
+    st.write("With a Match Score of :", Ranked_resumes.iloc[indx-1, 7])
+    # fig = go.Figure(data=[go.Table(
+    #     header=dict(values=["Resume"],
+    #                 fill_color='#f0a500',
+    #                 align='center', font=dict(color='white', size=16)),
+    #     cells=dict(values=[str(value)],
+    #                fill_color='#11470c',
+    #                align='left'))])
 
-    fig.update_layout(width=800, height=1200)
-    st.write(fig)
-    # st.text(df_sorted.iloc[indx-1, 1])
-    st.markdown("---")
+    # fig.update_layout(width=800, height=1200)
+    # st.write(fig)
+    # # st.text(df_sorted.iloc[indx-1, 1])
+    # st.markdown("---")
+    
+    # print the email of the best matched resume
+    st.write("Best Matched Resume Email: ", email)
+    import smtplib
+
+    # Set up the email message
+    to_address = email
+    subject = 'Best Matched Resume'
+    body = 'Hello,\n\nYou have been selected for the interview. Please contact for further information.\n\nThank you,\nBusiness Name'
+    message = f'Subject: {subject}\n\n{body}'
+
+    # Set up the email server
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login('hireeasy2019@gmail.com', 'vjguohjbhanchkjw')
+
+    # Send the email
+    server.sendmail('mainprojacaa2019@gmail.com', to_address, message)
+
+    # Close the connection to the email server
+    server.quit()
+
+    st.write("The resume:\n", Ranked_resumes.iloc[indx-1, 1] )
+
+    # import fitz
+
+    # Printing the file
+    # filename = Ranked_resumes.iloc[indx-1, 0]
+    # file_path = f"Data/Resumes/{filename}"
+    # st.write(f"Displaying resume file: {filename}")
+
+    # with fitz.open(file_path) as doc:
+    #     for page in doc:
+    #         st.image(page.getPixmap().getImageData(), use_column_width=True)
