@@ -262,6 +262,24 @@ if option_2 == 'YES':
     
     # print the email of the best matched resume
     st.write("Best Matched Resume Email: ", email)
+    import smtplib
+
+    # Set up the email message
+    to_address = email
+    subject = 'Best Matched Resume'
+    body = 'Hello,\n\nYou have been selected for the interview. Please contact for further information.\n\nThank you,\nBusiness Name'
+    message = f'Subject: {subject}\n\n{body}'
+
+    # Set up the email server
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login('hireeasy2019@gmail.com', 'vjguohjbhanchkjw')
+
+    # Send the email
+    server.sendmail('mainprojacaa2019@gmail.com', to_address, message)
+
+    # Close the connection to the email server
+    server.quit()
 
     st.write("The resume:\n", Ranked_resumes.iloc[indx-1, 1] )
 
