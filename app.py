@@ -283,7 +283,7 @@ if option_2 == 'YES':
 
     st.write("The resume:\n", Ranked_resumes.iloc[indx-1, 1] )
 
-    import fitz
+    # import fitz
 
    #### Printing the file
     # filename = Ranked_resumes.iloc[indx-1, 0]
