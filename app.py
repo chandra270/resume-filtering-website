@@ -247,20 +247,20 @@ if option_2 == 'YES':
     st.pyplot(plt)
 
     st.write("With a Match Score of :", Ranked_resumes.iloc[indx-1, 7])
-    # fig = go.Figure(data=[go.Table(
-    #     header=dict(values=["Resume"],
-    #                 fill_color='#f0a500',
-    #                 align='center', font=dict(color='white', size=16)),
-    #     cells=dict(values=[str(value)],
-    #                fill_color='#11470c',
-    #                align='left'))])
+    fig = go.Figure(data=[go.Table(
+        header=dict(values=["Resume"],
+                    fill_color='#f0a500',
+                    align='center', font=dict(color='white', size=16)),
+        cells=dict(values=[str(value)],
+                   fill_color='#11470c',
+                   align='left'))])
 
-    # fig.update_layout(width=800, height=1200)
-    # st.write(fig)
-    # # st.text(df_sorted.iloc[indx-1, 1])
-    # st.markdown("---")
+    fig.update_layout(width=800, height=1200)
+    st.write(fig)
+    # st.text(df_sorted.iloc[indx-1, 1])
+    st.markdown("---")
     
-    # print the email of the best matched resume
+    # # print the email of the best matched resume
     st.write("Best Matched Resume Email: ", email)
     import smtplib
 
@@ -273,19 +273,19 @@ if option_2 == 'YES':
     # Set up the email server
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
-    server.login('hireeasy2019@gmail.com', 'vjguohjbhanchkjw')
+    server.login('anilca185@gmail.com', 'rndqzmazkyjapadb')
 
     # Send the email
-    server.sendmail('mainprojacaa2019@gmail.com', to_address, message)
+    server.sendmail('anilca185@gmail.com', to_address, message)
 
     # Close the connection to the email server
     server.quit()
 
     st.write("The resume:\n", Ranked_resumes.iloc[indx-1, 1] )
 
-    # import fitz
+    import fitz
 
-    # Printing the file
+   #### Printing the file
     # filename = Ranked_resumes.iloc[indx-1, 0]
     # file_path = f"Data/Resumes/{filename}"
     # st.write(f"Displaying resume file: {filename}")
