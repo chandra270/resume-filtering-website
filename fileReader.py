@@ -6,7 +6,7 @@ import pandas as pd
 import os
 import tf_idf
 import re
-
+# pyright: reportUnusedVariable=false
 resume_dir = "Data/Resumes/"
 job_desc_dir = "Data/JobDesc/"
 resume_names = os.listdir(resume_dir)
@@ -57,6 +57,7 @@ def get_cleaned_words_resume(document):
         document[i].append(sentence)
         # Reorder the columns to have email as the last column
         document[i] = document[i][:-2] + [document[i][-1], document[i][-2]]
+        
     return document
 
 def get_cleaned_words_jobs(document):
@@ -66,9 +67,8 @@ def get_cleaned_words_jobs(document):
         document[i].append(" ".join(raw[1]))
         document[i].append(" ".join(raw[2]))
         sentence = tf_idf.do_tfidf(document[i][3].split(" "))
-        document[i].append(sentence)
+        document[i].append(sentence) 
     return document
-
 Doc = get_cleaned_words_resume(document)
 
 Database = pd.DataFrame(document, columns=[
@@ -97,7 +97,7 @@ Jd = get_cleaned_words_jobs(job_document)
 
 jd_database = pd.DataFrame(Jd, columns=[
                            "Name", "Context", "Cleaned", "Selective", "Selective_Reduced", "TF_Based"])
-
+print(jd_database.head(10))
 jd_database.to_csv("Job_Data.csv", index=False)
 
 

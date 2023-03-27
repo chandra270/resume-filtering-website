@@ -53,3 +53,6 @@ def Cleaner(text):
     sentence_targetted = _get_target_words(sentence_reduced)
     sentence.append(sentence_targetted)
     return sentence
+
+
+

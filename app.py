@@ -1,3 +1,4 @@
+# pyright: reportUnusedVariable=false
 from ctypes import alignment
 from tkinter import CENTER
 from turtle import width
@@ -44,7 +45,7 @@ if len(Jobs['Name']) > 1:
     option_yn = st.selectbox(
         "Show the      Job Description Names?", options=['YES', 'NO'])
     if option_yn == 'YES':
-        index = [a+1 for a in range(len(Jobs['Name']))]
+        index = [a for a in range(len(Jobs['Name']))]
         fig = go.Figure(data=[go.Table(header=dict(values=["Job No.", "Job Desc. Name"], line_color='white',
                                                    fill_color='#050b4a'),
                                        cells=dict(values=[index, Jobs['Name']], line_color='white',
@@ -55,8 +56,8 @@ if len(Jobs['Name']) > 1:
 
 
 # Asking to chose the Job Description
-index = st.slider("Which JD to select ? : ", 1,
-                  len(Jobs['Name']), 1)
+index = st.slider("Which JD to select ? : ", 0,
+                  len(Jobs['Name'])-1, 0)
 
 
 option_yn = st.selectbox("Show the Job Description ?", options=['YES', 'NO'])
@@ -67,7 +68,7 @@ if option_yn == 'YES':
         header=dict(values=["Job Description"],
                     fill_color='#0b2430',
                     align='center', font=dict(color='white', size=16)),
-        cells=dict(values=[Jobs['Context'][index-1]],
+        cells=dict(values=[Jobs['Context'][index]],
                    fill_color='#13384a',
                    align='left'))])
 
