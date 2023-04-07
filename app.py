@@ -18,6 +18,8 @@ import time
 import os
 import smtplib
 from dotenv import load_dotenv
+import streamlit.components.v1 as components
+import base64
 
 #image = Image.open('Images//he.png')
 #st.image(image,width= 550)
@@ -73,19 +75,31 @@ if option_yn == 'YES':
                    fill_color='#13384a',
                    align='left'))])
 
-    fig.update_layout(width=800, height=500)
+    fig.update_layout(width=700, height=600)
     st.write(fig)
-    st.markdown("---")
-
 
 #################################### SCORE CALCUATION ################################
 @st.cache()
+
 def calculate_scores(resumes, job_description):
+
     scores = []
     for x in range(resumes.shape[0]):
-        score = Similar.match(
-            resumes['TF_Based'][x], job_description['TF_Based'][index])
+        with open("a.txt", "w", encoding="utf-8") as f:
+            f.write(str(resumes['Skills'][x])+"\n")
+    
+        with open('b.txt', 'w', encoding="utf-8") as g:
+            g.write(str(job_description['Skills'][index-1]) + "\n\n")
+    
+        with open("a.txt", "r", encoding="utf-8") as f:
+            resume_skills = f.read()
+    
+        with open("b.txt", "r", encoding="utf-8") as g:
+            job_skills = g.read()
+    
+        score = Similar.matchLSA(resume_skills, job_skills)
         scores.append(score)
+
     return scores
 
 
@@ -126,15 +140,14 @@ st.markdown("---")
 @st.cache()
 def get_list_of_words(document):
     Document = []
-
     for a in document:
+        if isinstance(a, float):
+            a = str(a)
         raw = a.split(" ")
         Document.append(raw)
-
     return Document
 
-
-document = get_list_of_words(Resumes['Cleaned'])
+document = get_list_of_words(Resumes['Skills'])
 
 id2word = corpora.Dictionary(document)
 corpus = [id2word.doc2bow(text) for text in document]
@@ -168,7 +181,7 @@ def format_topics_sentences(ldamodel, corpus):
 # st.sidebar.button('Hit Me')
 st.markdown("## Topics and Topic Related Keywords ")
 st.markdown(
-    """This Wordcloud representation shows the Topic Number and the Top Keywords that contstitute a Topic.
+    """This Wordcloud representation shows the Topic Number and the Top Keywords that constitute a Topic.
     This further is used to cluster the resumes.      """)
 
 cols = [color for name, color in mcolors.TABLEAU_COLORS.items()]
@@ -216,8 +229,16 @@ df = df_some
 st.markdown("## Topic Modelling of Resumes ")
 st.markdown(
     "Using LDA to divide the topics into a number of usefull topics and creating a Cluster of matching topic resumes.  ")
-fig3 = px.sunburst(df, path=['Dominant Topic', 'Names'], values='Topic % Contribution',
-                   color='Dominant Topic', color_continuous_scale='viridis', width=800, height=800, title="Topic Distribution Graph")
+fig3 = px.sunburst(df, 
+                   path=['Dominant Topic', 'Names'], 
+                   values='Topic % Contribution',
+                   color='Dominant Topic', 
+                   color_continuous_scale='viridis', 
+                   width=800, 
+                   height=800, 
+                   title="Topic Distribution Graph",
+                   labels={'Dominant Topic': ''}
+                  )
 st.write(fig3)
 
 
@@ -232,7 +253,7 @@ if option_2 == 'YES':
     st.write("Displaying Resume with Rank: ", indx)
     
     # get the email of the best matched resume
-    email = Ranked_resumes.iloc[indx-1, 6]
+    email = Ranked_resumes.iloc[indx-1, 3]
     
     st.markdown("---")
     st.markdown("## **Resume** ")
@@ -248,19 +269,7 @@ if option_2 == 'YES':
     plt.tight_layout(pad=0)
     st.pyplot(plt)
 
-    st.write("With a Match Score of :", Ranked_resumes.iloc[indx-1, 7])
-    # fig = go.Figure(data=[go.Table(
-    #     header=dict(values=["Resume"],
-    #                 fill_color='#f0a500',
-    #                 align='center', font=dict(color='white', size=16)),
-    #     cells=dict(values=[str(value)],
-    #                fill_color='#11470c',
-    #                align='left'))])
-
-    # fig.update_layout(width=800, height=1200)
-    # st.write(fig)
-    # # st.text(df_sorted.iloc[indx-1, 1])
-    # st.markdown("---")
+    st.write("With a Match Score of :", Ranked_resumes.iloc[indx-1, 4])
     
     # print the email of the best matched resume
     st.write("Best Matched Resume Email: ", email)
@@ -268,7 +277,7 @@ if option_2 == 'YES':
     # Set up the email message
     to_address = email
     subject = 'Best Matched Resume'
-    body = 'Hello,\n\nYou have been selected for the interview. Please contact for further information.\n\nThank you,\nBusiness Name'
+    body = 'Hello,\n\nYou have been selected for the interview. Please contact for further information.\n\nThank you,\nHire Easy'
     message = f'Subject: {subject}\n\n{body}'
 
     # Set up the email server
@@ -296,13 +305,42 @@ if option_2 == 'YES':
         send_email()
         st.write('Email sent to:', email)
 
-    # import fitz
 
-    # Printing the file
-    # filename = Ranked_resumes.iloc[indx-1, 0]
-    # file_path = f"Data/Resumes/{filename}"
-    # st.write(f"Displaying resume file: {filename}")
+##################### display resume ########################
 
-    # with fitz.open(file_path) as doc:
-    #     for page in doc:
-    #         st.image(page.getPixmap().getImageData(), use_column_width=True)
+# Set the default index to 0
+
+# inds = 1
+
+# Create a slider to select the resume to display
+# resume_num = st.slider("Select a resume to display", 1, len(Ranked_resumes))
+
+# # Update the indx variable based on the selected resume
+# inds = resume_num - 1
+
+# Get the file extension of the selected resume
+top_filename = Ranked_resumes.iloc[indx-1, 0]
+extension = os.path.splitext(top_filename)[1]
+
+# Display the selected resume
+
+def show_pdf(folder_name, file_name):
+    current_dir = os.path.abspath(os.getcwd())
+    file_path = os.path.join('Data', 'Resumes', file_name)
+    with open(file_path, "rb") as f:
+        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="800" height="800" type="application/pdf"></iframe>'
+    st.markdown(pdf_display, unsafe_allow_html=True)
+
+@st.cache(suppress_st_warning=True)
+def show_docx(folder_name, file_name):
+    file_path = os.path.join('Data', 'Resumes', file_name)
+    with open(file_path, 'rb') as f:
+        base64_docx = base64.b64encode(f.read()).decode('utf-8')
+    docx_display = f'<iframe src="data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,{base64_docx}" width="800" height="800" type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"></iframe>'
+    st.markdown(docx_display, unsafe_allow_html=True)
+
+if extension == ".pdf":
+    show_pdf('Resumes', top_filename)
+elif extension == ".docx":
+    show_docx('Resumes', top_filename)
